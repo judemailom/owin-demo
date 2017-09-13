@@ -28,17 +28,36 @@ namespace OwinDemo
                 }
             });
 
+            app.UseCookieAuthentication(new Microsoft.Owin.Security.Cookies.CookieAuthenticationOptions
+            {
+                AuthenticationType = "ApplicationCookie",
+                LoginPath = new Microsoft.Owin.PathString("/Auth/Login")
+            });
+
+            app.Use(async (ctx, next) => {
+                if (ctx.Authentication.User.Identity.IsAuthenticated)
+                {
+                    Debug.WriteLine("User: " + ctx.Authentication.User.Identity.Name);
+                }
+                else
+                {
+                    Debug.WriteLine("User not authenticated");
+                }
+                await next();
+            });
+
             var configAPI = new HttpConfiguration();
             configAPI.MapHttpAttributeRoutes();
             app.UseWebApi(configAPI);
 
-            app.UseNancy(config => {
-                config.PassThroughWhenStatusCodesAre(Nancy.HttpStatusCode.NotFound);
-            });
+            app.Map("/nancy", mappedApp => { mappedApp.UseNancy(); });
+            //app.UseNancy(config => {
+            //    config.PassThroughWhenStatusCodesAre(Nancy.HttpStatusCode.NotFound);
+            //});
 
-            app.Use(async(ctx, next) => {
-                await ctx.Response.WriteAsync("Hello world!");
-            });
+            //app.Use(async(ctx, next) => {
+            //    await ctx.Response.WriteAsync("Hello world!");
+            //});
         }
     }
 }

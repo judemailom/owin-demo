@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using Nancy;
 using Nancy.Owin;
+using Nancy.Security;
 
 namespace OwinDemo.Modules
 {
@@ -11,10 +12,13 @@ namespace OwinDemo.Modules
     {
         public NancyDemoModule()
         {
+            this.RequiresMSOwinAuthentication();
             Get["/nancy"] = x => {
                 var env = Context.GetOwinEnvironment();
 
-                return "Hello from Nancy! You requested: " + env["owin.RequestPath"];
+                var user = Context.GetMSOwinUser();
+
+                return "Hello from Nancy! You requested: " + env["owin.RequestPath"] + "<br/><br/>User: " + user.Identity.Name;
             };
         }
     }
