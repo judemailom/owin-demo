@@ -15,6 +15,7 @@ namespace OwinDemo.Core
             sample.Add(new AuthorModel("course-house", "Cory", "House"));
             sample.Add(new AuthorModel("scott-allen","Scott","Allen"));
             sample.Add(new AuthorModel("dan-wahlin","Dan","Wahlin"));
+            sample.Add(new AuthorModel("jude-allen","Jude","Allen"));
 
             return Newtonsoft.Json.JsonConvert.SerializeObject(sample);
         }
