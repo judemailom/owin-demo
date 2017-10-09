@@ -7,13 +7,20 @@ using System.Linq;
 using System.Web;
 using Nancy.Owin;
 using System.Web.Http;
+using OwinDemo.Core;
+using SimpleInjector;
 
 namespace OwinDemo
 {
     public class Startup
     {
+        static Container container;
         public static void Configuration(IAppBuilder app)
         {
+            container = new Container();
+            container.Register<IActionHandler,ClassActionHandler>();
+            container.Verify();
+
             app.UseDebugMiddleware(new DebugMiddlewareOptions
             {
                 OnIncomingRequest = (ctx) => {
@@ -25,6 +32,7 @@ namespace OwinDemo
                     var watch = (Stopwatch)ctx.Environment["DebugStopwatch"];
                     watch.Stop();
                     Debug.WriteLine("Request took:" + watch.ElapsedMilliseconds + " ms");
+                    Debug.WriteLine(container.GetInstance<IActionHandler>().GetReAction("werw"));
                 }
             });
 
